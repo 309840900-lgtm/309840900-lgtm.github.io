@@ -1,6 +1,6 @@
 import { mainStore } from "@/store";
 import { Error } from "@icon-park/vue-next";
-import { h } from "vue"; // 这里你原来缺了h的导入！
+import { h } from "vue";
 const store = mainStore();
 const bgUrl = ref(null);
 const imgTimeout = ref(null);
@@ -11,7 +11,6 @@ const bgRandom = Math.floor(Math.random() * 10 + 1);
 // 更换壁纸链接
 const changeBg = (type) => {
   if (type == 0) {
-    // ✅ 修改：去掉开头 / 变成相对路径
     bgUrl.value = `images/background${bgRandom}.jpg`;
   } else if (type == 1) {
     bgUrl.value = "https://api.dujin.org/bing/1920.php";
@@ -46,10 +45,7 @@ const imgLoadError = () => {
       fill: "#efefef",
     }),
   });
-  // ✅ 新增：失败也要标记加载完成，解除页面锁死
-  store.setImgLoadStatus(true);
-  // ✅ 删除原来这一行：bgUrl.value = `/images/background${bgRandom}.jpg`
-  // 删掉！避免无限重试加载错误图片
+  // bgUrl.value = `/images/background${bgRandom}.jpg`;
 };
 // 监听壁纸切换
 watch(
