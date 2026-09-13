@@ -76,7 +76,7 @@ const imgLoadError = () => {
       fill: "#efefef",
     }),
   });
-  // bgUrl.value = `/images/background${bgRandom}.jpg`;
+  store.setImgLoadStatus(true);
 };
 
 // 监听壁纸切换
