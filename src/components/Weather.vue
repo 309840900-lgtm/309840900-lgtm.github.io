@@ -35,14 +35,17 @@ const weatherData = reactive({
   },
 });
 
-// 获取天气数据
 const getWeatherData = async () => {
   try {
-    // 直接通过 Cloudflare Worker 代理查询固定城市天气
-    // 把 "武汉" 换成你所在的城市即可
-    const result = await getWeather("武汉");
+    // 1. 调用跨域IP接口获取用户所在城市
+    const ipRes = await fetch("https://ipapi.co/json/");
+    const ipData = await ipRes.json();
+    const city = ipData.city || "武汉"; // 定位失败就 fallback 到默认城市
+
+    // 2. 通过 Worker 代理查询对应城市天气
+    const result = await getWeather(city);
     
-    // 高德实况天气数据在 lives 数组第一项中
+    // 3. 赋值数据，结构和原模板完全兼容
     const live = result.lives[0];
     weatherData.adCode.city = live.city;
     weatherData.weather = {
@@ -56,6 +59,7 @@ const getWeatherData = async () => {
     onError("天气信息获取失败");
   }
 };
+
 
 // 报错提示
 const onError = (message) => {
