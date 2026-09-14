@@ -27,6 +27,7 @@
           <a v-if="siteIcp" href="https://beian.miit.gov.cn" target="_blank">
             {{ siteIcp }}
           </a>
+         </template>
         </span>
       </div>
       <div v-else class="lrc">
