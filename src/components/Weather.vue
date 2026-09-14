@@ -22,7 +22,6 @@ import { getWeather } from "@/api";
 import { reactive, onMounted, h } from "vue";
 import { Error } from "@icon-park/vue-next";
 
-// 天气数据结构保持和原模板一致
 const weatherData = reactive({
   adCode: {
     city: null,
@@ -37,16 +36,13 @@ const weatherData = reactive({
 
 const getWeatherData = async () => {
   try {
-    // 1. 调用跨域IP接口获取用户所在城市
-    const ipRes = await fetch("https://ipapi.co/json/");
-    const ipData = await ipRes.json();
-    const city = ipData.city || "武汉"; // 定位失败就 fallback 到默认城市
+    // 直接传城市名调用代理接口，只传一个参数
+    const result = await getWeather("武汉");
+    console.log("天气接口返回：", result); // 方便排查，没问题可以删掉
 
-    // 2. 通过 Worker 代理查询对应城市天气
-    const result = await getWeather(city);
-    
-    // 3. 赋值数据，结构和原模板完全兼容
-    const live = result.lives[0];
+    const live = result.lives?.[0];
+    if (!live) throw "返回数据格式异常";
+
     weatherData.adCode.city = live.city;
     weatherData.weather = {
       weather: live.weather,
@@ -55,13 +51,11 @@ const getWeatherData = async () => {
       windpower: live.windpower,
     };
   } catch (error) {
-    console.error("天气信息获取失败:" + error);
+    console.error("天气信息获取失败:", error);
     onError("天气信息获取失败");
   }
 };
 
-
-// 报错提示
 const onError = (message) => {
   ElMessage({
     message,
