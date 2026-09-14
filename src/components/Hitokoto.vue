@@ -40,8 +40,8 @@ const openMusicShow = ref(false);
 
 // 一言数据
 const hitokotoData = reactive({
-  text: "这里应该显示一句话",
-  from: "無名",
+  text: "路过就是缘分，欢迎下次再来",
+  from: "宇",
 });
 
 // 获取一言数据
@@ -72,7 +72,7 @@ const updateHitokoto = () => {
 };
 
 onMounted(() => {
-  getHitokotoData();
+  //getHitokotoData();
 });
 </script>
 
