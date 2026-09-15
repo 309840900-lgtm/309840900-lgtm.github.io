@@ -10,7 +10,7 @@
       <div 
         class="btn-icon" 
         :class="{ 'rotating': store.playerState }"
-        @click.stop="playToggle"
+        @click="playToggle"
         title="播放/暂停"
       >
         <MusicOne theme="filled" size="24" fill="#efefef" />
@@ -130,6 +130,15 @@ const props = defineProps({
 const listHeight = computed(() => {
   return props.listMaxHeight + "px";
 });
+  // 监听展开状态，展开自动弹出歌单
+watch(isExpand, (val) => {
+  if (val && player.value) {
+    nextTick(() => {
+      player.value.toggleList()
+    })
+  }
+})
+
 onMounted(() => {
   nextTick(() => {
     console.log('播放器传入参数：', props.songServer, props.songType, props.songId);
