@@ -1,42 +1,63 @@
 <template>
-  <APlayer
-    v-if="playList[0]"
-    ref="player"
-    :audio="playList"
-    :autoplay="store.playerAutoplay"
-    :theme="theme"
-    :autoSwitch="false"
-    :loop="store.playerLoop"
-    :order="store.playerOrder"
-    :volume="volume"
-    :showLrc="true"
-    :listFolded="listFolded"
-    :listMaxHeight="listMaxHeight"
-    :noticeSwitch="false"
-    @play="onPlay"
-    @pause="onPause"
-    @timeupdate="onTimeUp"
-    @error="loadMusicError"
-  />
+  <div class="player-float">
+    <!-- 折叠状态：右下角圆形按钮 -->
+    <div 
+      v-if="!isExpand" 
+      class="fold-btn"
+      @click="isExpand = true"
+      title="展开播放器"
+    >
+      <div class="btn-icon" :class="{ 'rotating': store.playerState }">
+        <MusicOne theme="filled" size="24" fill="#efefef" />
+      </div>
+    </div>
+
+    <!-- 展开状态：完整播放器面板 -->
+    <div v-else class="expand-panel">
+      <div class="panel-header">
+        <span class="title">音乐播放器</span>
+        <span class="fold-text" @click="isExpand = false" title="收起">收起</span>
+      </div>
+      <APlayer
+        v-if="playList[0]"
+        ref="player"
+        :audio="playList"
+        :autoplay="store.playerAutoplay"
+        :theme="theme"
+        :autoSwitch="false"
+        :loop="store.playerLoop"
+        :order="store.playerOrder"
+        :volume="volume"
+        :showLrc="true"
+        :listFolded="listFolded"
+        :listMaxHeight="listMaxHeight"
+        :noticeSwitch="false"
+        @play="onPlay"
+        @pause="onPause"
+        @timeupdate="onTimeUp"
+        @error="loadMusicError"
+      />
+    </div>
+  </div>
 </template>
 
 <script setup>
+import { ref, computed, nextTick, onMounted } from 'vue'
 import { MusicOne, PlayWrong } from "@icon-park/vue-next";
 import { getPlayerList } from "@/api";
 import { mainStore } from "@/store";
 import APlayer from "@worstone/vue-aplayer";
 
 const store = mainStore();
+// 新增：折叠/展开状态
+const isExpand = ref(false);
 
 // 获取播放器 DOM
 const player = ref(null);
-
 // 歌曲播放列表
 const playList = ref([]);
-
 // 歌曲播放项
 const playIndex = ref(0);
-
 // 配置项
 const props = defineProps({
   // 主题色
@@ -78,11 +99,9 @@ const props = defineProps({
     default: 420,
   },
 });
-
 const listHeight = computed(() => {
   return props.listMaxHeight + "px";
 });
-
 onMounted(() => {
   nextTick(() => {
     console.log('播放器传入参数：', props.songServer, props.songType, props.songId);
@@ -99,8 +118,6 @@ onMounted(() => {
       });
   });
 });
-
-
 // 播放
 const onPlay = () => {
   console.log("播放");
@@ -118,12 +135,10 @@ const onPlay = () => {
     }),
   });
 };
-
 // 暂停
 const onPause = () => {
   store.setPlayerState(player.value.audioRef.paused);
 };
-
 // 音频时间更新事件
 const onTimeUp = () => {
   let lyrics = player.value.aplayer.lyrics[playIndex.value];
@@ -139,17 +154,14 @@ const onTimeUp = () => {
   }
   store.setPlayerLrc(lrc);
 };
-
 // 切换播放暂停事件
 const playToggle = () => {
   player.value.toggle();
 };
-
 // 切换音量事件
 const changeVolume = (value) => {
   player.value.setVolume(value, false);
 };
-
 // 切换上下曲
 const changeSong = (type) => {
   type === 0 ? player.value.skipBack() : player.value.skipForward();
@@ -157,12 +169,10 @@ const changeSong = (type) => {
     player.value.play();
   });
 };
-
 // 切换歌曲列表状态
 const toggleList = () => {
   player.value.toggleList();
 };
-
 // 加载音频错误
 const loadMusicError = () => {
   let notice = "";
@@ -184,14 +194,120 @@ const loadMusicError = () => {
     "播放歌曲: " + player.value.aplayer.audio[player.value.aplayer.index].name + " 出现错误",
   );
 };
-
 // 暴露子组件方法
 defineExpose({ playToggle, changeVolume, changeSong, toggleList });
 </script>
 
 <style lang="scss" scoped>
+.player-float {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 999;
+  color: #efefef;
+
+  // 折叠圆形按钮
+  .fold-btn {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+      background: rgba(0, 0, 0, 0.35);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+
+    .btn-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &.rotating {
+        animation: rotate 10s linear infinite;
+      }
+    }
+  }
+
+  // 展开面板
+  .expand-panel {
+    width: 340px;
+    background: rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.3s ease;
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      padding: 0 4px;
+
+      .title {
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      .fold-text {
+        font-size: 12px;
+        opacity: 0.7;
+        cursor: pointer;
+        transition: opacity 0.2s;
+
+        &:hover {
+          opacity: 1;
+        }
+      }
+    }
+  }
+
+  @keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  // 移动端适配
+  @media (max-width: 480px) {
+    right: 16px;
+    bottom: 16px;
+
+    .expand-panel {
+      width: calc(100vw - 32px);
+    }
+  }
+}
+
+// 原有 APlayer 样式全部保留，仅调整宽度适配
 .aplayer {
-  width: 80%;
+  width: 100%;
   border-radius: 6px;
   font-family: "HarmonyOS_Regular", sans-serif !important;
   :deep(.aplayer-body) {
