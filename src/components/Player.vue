@@ -132,6 +132,14 @@ onMounted(() => {
         store.musicIsOk = false;
       });
   });
+     // 全局空格键控制当前播放
+    window.addEventListener("keydown", (e) => {
+    if (!store.musicIsOk || !player.value) return
+    if (e.code === "Space") {
+     e.preventDefault()
+     playToggle()
+    }
+   })
   window.$openMusicPanel = openMusicPanel
 });
 // 播放
