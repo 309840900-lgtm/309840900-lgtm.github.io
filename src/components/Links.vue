@@ -79,10 +79,12 @@ const jumpLink = (data) => {
     store.projectsOpenState = true;
     return; 
   }
-  if (data.name === "音乐" && store.musicClick) {
-    if (typeof $openList === "function") $openList();
-  } else {
-    window.open(data.link, "_blank");
+  // 音乐卡片：展开右下角播放器 + 弹出歌单
+  if (data.name === "音乐") {
+   if (typeof window.$openMusicPanel === "function") {
+    window.$openMusicPanel();
+     }
+   return; // 直接拦截，不跳转任何链接
   }
 };
 
