@@ -36,9 +36,6 @@
        :song-type="songType"
        :song-id="songId"
         theme="#efefef"
-        :mini="true"
-        :fixed="true"
-         style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;"
         />
     </main>
   </Transition>
