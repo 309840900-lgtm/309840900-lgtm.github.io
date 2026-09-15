@@ -145,6 +145,7 @@ onMounted(() => {
         store.musicIsOk = false;
       });
   });
+  window.$openMusicPanel = openMusicPanel
 });
 // 播放
 const onPlay = () => {
@@ -222,8 +223,20 @@ const loadMusicError = () => {
     "播放歌曲: " + player.value.aplayer.audio[player.value.aplayer.index].name + " 出现错误",
   );
 };
+// 展开面板并打开歌单
+const openMusicPanel = () => {
+  isExpand.value = true
+  nextTick(() => {
+    player.value.toggleList()
+  })
+}
+// 切换展开/收起
+const toggleExpand = () => {
+  isExpand.value = !isExpand.value
+}
+
 // 暴露子组件方法
-defineExpose({ playToggle, changeVolume, changeSong, toggleList });
+defineExpose({ playToggle, changeVolume, changeSong, toggleList, toggleExpand, openMusicPanel });
 </script>
 
 <style lang="scss" scoped>
