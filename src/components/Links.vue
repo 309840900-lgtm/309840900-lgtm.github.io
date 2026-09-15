@@ -74,6 +74,10 @@ const siteIcon = {
 
 // 链接跳转
 const jumpLink = (data) => {
+  if (data.name === "项目作品") {
+    store.projectsOpenState = true;
+    return;
+  }
   if (data.name === "音乐" && store.musicClick) {
     if (typeof $openList === "function") $openList();
   } else {
