@@ -11,6 +11,7 @@
           <MainLeft />
           <MainRight v-show="!store.boxOpenState" />
           <Box v-show="store.boxOpenState" />
+          <Projects v-show="store.projectsOpenState" />
         </section>
         <section class="more" v-show="store.setOpenState" @click="store.setOpenState = false">
           <MoreSet />
@@ -58,6 +59,7 @@ import MoreSet from "@/views/MoreSet/index.vue";
 import cursorInit from "@/utils/cursor.js";
 import config from "@/../package.json";
 import Player from "@/components/Player.vue";
+import Projects from "@/views/Projects/index.vue";
 
 const store = mainStore();
 // 音乐播放器配置
