@@ -24,9 +24,7 @@
       <!-- 顶部按钮栏 -->
       <div class="btns">
         <span @click="openMusicList()">音乐列表</span>
-        <span class="fold-icon" @click="isExpand = false" title="收起">
-          <chevron-down theme="filled" size="18" fill="#efefef" />
-        </span>
+        <span class="fold-text" @click="isExpand = false" title="收起">收起</span>
       </div>
 
       <!-- 播放控制区 -->
@@ -107,7 +105,6 @@ import {
   VolumeMute,
   VolumeSmall,
   VolumeNotice,
-  ChevronDown,
 } from "@icon-park/vue-next";
 import Player from "@/components/Player.vue";
 import { mainStore } from "@/store";
@@ -239,13 +236,8 @@ watch(
         }
       }
 
-      .fold-icon {
-        width: 22px;
-        height: 22px;
-        padding: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+      .fold-text {
+        opacity: 0.85;
       }
     }
 
