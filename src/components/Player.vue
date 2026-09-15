@@ -83,34 +83,23 @@ const listHeight = computed(() => {
   return props.listMaxHeight + "px";
 });
 
-// 初始化播放器
 onMounted(() => {
   nextTick(() => {
-    try {
-      getPlayerList(props.songServer, props.songType, props.songId).then((res) => {
-        console.log(res);
-        // 更改播放器加载状态
+    console.log('播放器传入参数：', props.songServer, props.songType, props.songId);
+    console.log('读取的API地址：', import.meta.env.VITE_SONG_API);
+    getPlayerList(props.songServer, props.songType, props.songId)
+      .then((res) => {
+        console.log('接口返回结果：', res);
         store.musicIsOk = true;
-        // 生成歌单
         playList.value = res;
-        console.log("音乐加载完成");
-        console.log(playList.value);
-        console.log(playIndex.value, playList.value.length, props.volume);
+      })
+      .catch(err => {
+        console.error('请求失败：', err);
+        store.musicIsOk = false;
       });
-    } catch (err) {
-      console.error(err);
-      store.musicIsOk = false;
-      ElMessage({
-        message: "播放器加载失败",
-        grouping: true,
-        icon: h(PlayWrong, {
-          theme: "filled",
-          fill: "#efefef",
-        }),
-      });
-    }
   });
 });
+
 
 // 播放
 const onPlay = () => {
