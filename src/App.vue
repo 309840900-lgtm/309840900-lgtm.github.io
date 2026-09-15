@@ -59,7 +59,8 @@ import MoreSet from "@/views/MoreSet/index.vue";
 import cursorInit from "@/utils/cursor.js";
 import config from "@/../package.json";
 import Player from "@/components/Player.vue";
-import Projects from "@/views/Projects/index.vue";
+import Projects from "@/views/projects/index.vue";
+
 
 const store = mainStore();
 // 音乐播放器配置
