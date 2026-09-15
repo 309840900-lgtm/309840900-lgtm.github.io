@@ -29,6 +29,14 @@
       <Transition name="fade" mode="out-in">
         <Footer class="f-ter" v-show="!store.backgroundShow && !store.setOpenState" />
       </Transition>
+      <!-- 全局音乐播放器 -->
+      <Player
+        :song-server="import.meta.env.VITE_SONG_SERVER"
+        :song-type="import.meta.env.VITE_SONG_TYPE"
+        :song-id="import.meta.env.VITE_SONG_ID"
+        theme="#efefef"
+        :volume="0.7"
+      />
     </main>
   </Transition>
 </template>
@@ -47,6 +55,7 @@ import Box from "@/views/Box/index.vue";
 import MoreSet from "@/views/MoreSet/index.vue";
 import cursorInit from "@/utils/cursor.js";
 import config from "@/../package.json";
+import Player from "@/components/Player.vue";
 
 const store = mainStore();
 
@@ -110,7 +119,7 @@ onMounted(() => {
   const styleTitle2 = "font-size:12px;color: rgb(244,167,89);";
   const styleContent = "color: rgb(30,152,255);";
   const title1 = "小宇の主页";
-  const title2 = "个人主页";
+  const title2 = "这只是一个测试";
   const content = `\n\n版本: ${config.version}\n主页: ${config.home}\nGithub: ${config.github}`;
   console.info(`%c${title1} %c${title2} %c${content}`, styleTitle1, styleTitle2, styleContent);
 });
