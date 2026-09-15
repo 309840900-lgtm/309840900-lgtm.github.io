@@ -140,13 +140,12 @@ onMounted(() => {
      playToggle()
     }
    })
-  window.$openMusicPanel = openMusicPanel
-});
   window.$playToggle = playToggle
   window.$changeSong = changeSong
   window.$setVolume = changeVolume
   window.$openMusicPanel = openMusicPanel
-
+  window.$openMusicPanel = openMusicPanel
+});
 // 播放
 const onPlay = () => {
   console.log("播放");
