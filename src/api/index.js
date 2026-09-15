@@ -7,8 +7,8 @@ import fetchJsonp from "fetch-jsonp";
 
     export const getPlayerList = (server, type, id) => {
      return fetch(`${import.meta.env.VITE_SONG_API}?server=${server}&type=${type}&id=${id}`)
-     .then(res => res.json())
-   }
+      .then(res => res.json())
+}
 
   if (data[0].url.startsWith("@")) {
     // eslint-disable-next-line no-unused-vars
