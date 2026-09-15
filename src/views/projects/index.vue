@@ -13,7 +13,7 @@
     <div class="projects-grid">
       <a
         v-for="item in projectsList"
-        :key="shturl."
+        :key="item.id"
         class="project-card"
         :href="item.github"
         target="_blank"
