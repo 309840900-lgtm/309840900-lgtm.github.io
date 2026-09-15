@@ -74,9 +74,10 @@ const siteIcon = {
 
 // 链接跳转
 const jumpLink = (data) => {
+  // 项目作品：打开内部面板
   if (data.name === "项目作品") {
     store.projectsOpenState = true;
-    return;
+    return; 
   }
   if (data.name === "音乐" && store.musicClick) {
     if (typeof $openList === "function") $openList();
