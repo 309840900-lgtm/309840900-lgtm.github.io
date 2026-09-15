@@ -30,13 +30,13 @@
         <Footer class="f-ter" v-show="!store.backgroundShow && !store.setOpenState" />
       </Transition>
       <!-- 全局音乐播放器 -->
-      <Player
-        :song-server="import.meta.env.VITE_SONG_SERVER"
-        :song-type="import.meta.env.VITE_SONG_TYPE"
-        :song-id="import.meta.env.VITE_SONG_ID"
+       <Player
+       :song-server="songServer"
+       :song-type="songType"
+       :song-id="songId"
         theme="#efefef"
         :volume="0.7"
-      />
+        />
     </main>
   </Transition>
 </template>
@@ -58,6 +58,10 @@ import config from "@/../package.json";
 import Player from "@/components/Player.vue";
 
 const store = mainStore();
+// 音乐播放器配置
+const songServer = import.meta.env.VITE_SONG_SERVER;
+const songType = import.meta.env.VITE_SONG_TYPE;
+const songId = import.meta.env.VITE_SONG_ID;
 
 // 页面宽度
 const getWidth = () => {
