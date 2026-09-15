@@ -144,16 +144,6 @@ const changeMusicIndex = (type) => {
   playerRef.value.changeSong(type);
 };
 onMounted(() => {
-  // 空格键事件
-  window.addEventListener("keydown", (e) => {
-    if (!store.musicIsOk) {
-      return;
-    }
-    if (e.code == "Space") {
-      e.preventDefault();
-      changePlayState();
-    }
-  });
   // 挂载方法至 window
   window.$openList = openMusicList;
 });
