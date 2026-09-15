@@ -150,6 +150,7 @@ onMounted(() => {
       return;
     }
     if (e.code == "Space") {
+      e.preventDefault();
       changePlayState();
     }
   });
