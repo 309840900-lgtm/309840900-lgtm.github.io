@@ -17,8 +17,8 @@
       </div>
     </div>
 
-    <!-- 展开状态：完整播放器面板 -->
-    <div v-if="isExpand" class="expand-panel">
+    <!-- 展开状态：完整播放器面板（v-show 只隐藏不销毁，音乐不中断） -->
+    <div v-show="isExpand" class="expand-panel">
       <div class="panel-header">
         <span class="title">音乐播放器</span>
         <span class="fold-text" @click="isExpand = false" title="收起">收起</span>
@@ -43,31 +43,9 @@
         @error="loadMusicError"
       />
     </div>
-
-    <!-- 永久渲染的播放器内核（隐藏不显示，保证音乐不中断） -->
-    <div class="player-hidden">
-      <APlayer
-        v-if="playList[0]"
-        ref="player"
-        :audio="playList"
-        :autoplay="store.playerAutoplay"
-        :theme="theme"
-        :autoSwitch="false"
-        :loop="store.playerLoop"
-        :order="store.playerOrder"
-        :volume="volume"
-        :showLrc="true"
-        :listFolded="listFolded"
-        :listMaxHeight="listMaxHeight"
-        :noticeSwitch="false"
-        @play="onPlay"
-        @pause="onPause"
-        @timeupdate="onTimeUp"
-        @error="loadMusicError"
-      />
-    </div>
   </div>
 </template>
+
 
 <script setup>
 import { ref, computed, nextTick, onMounted } from 'vue'
