@@ -7,17 +7,45 @@
       @click="isExpand = true"
       title="展开播放器"
     >
-      <div class="btn-icon" :class="{ 'rotating': store.playerState }">
+      <div 
+        class="btn-icon" 
+        :class="{ 'rotating': store.playerState }"
+        @click.stop="playToggle"
+        title="播放/暂停"
+      >
         <MusicOne theme="filled" size="24" fill="#efefef" />
       </div>
     </div>
 
     <!-- 展开状态：完整播放器面板 -->
-    <div v-else class="expand-panel">
+    <div v-if="isExpand" class="expand-panel">
       <div class="panel-header">
         <span class="title">音乐播放器</span>
         <span class="fold-text" @click="isExpand = false" title="收起">收起</span>
       </div>
+      <APlayer
+        v-if="playList[0]"
+        ref="player"
+        :audio="playList"
+        :autoplay="store.playerAutoplay"
+        :theme="theme"
+        :autoSwitch="false"
+        :loop="store.playerLoop"
+        :order="store.playerOrder"
+        :volume="volume"
+        :showLrc="true"
+        :listFolded="listFolded"
+        :listMaxHeight="listMaxHeight"
+        :noticeSwitch="false"
+        @play="onPlay"
+        @pause="onPause"
+        @timeupdate="onTimeUp"
+        @error="loadMusicError"
+      />
+    </div>
+
+    <!-- 永久渲染的播放器内核（隐藏不显示，保证音乐不中断） -->
+    <div class="player-hidden">
       <APlayer
         v-if="playList[0]"
         ref="player"
@@ -49,7 +77,7 @@ import { mainStore } from "@/store";
 import APlayer from "@worstone/vue-aplayer";
 
 const store = mainStore();
-// 新增：折叠/展开状态
+// 折叠/展开状态
 const isExpand = ref(false);
 
 // 获取播放器 DOM
@@ -205,6 +233,11 @@ defineExpose({ playToggle, changeVolume, changeSong, toggleList });
   bottom: 24px;
   z-index: 999;
   color: #efefef;
+
+  // 永久隐藏的播放器内核，只保留功能不显示
+  .player-hidden {
+    display: none;
+  }
 
   // 折叠圆形按钮
   .fold-btn {
