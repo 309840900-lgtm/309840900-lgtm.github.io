@@ -35,8 +35,9 @@
        :song-type="songType"
        :song-id="songId"
         theme="#efefef"
-        :volume="0.7"
-        style="position: fixed; bottom: 0; left: 0; width: 100%; z-index: 99999; background: rgba(0, 0, 0, 0.65); backdrop-filter: blur(12px);"
+        :mini="true"
+        :fixed="true"
+         style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;"
         />
     </main>
   </Transition>
