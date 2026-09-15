@@ -34,14 +34,36 @@ const weatherData = reactive({
   },
 });
 
+// 兜底默认城市，获取失败自动回退到这里
+const FALLBACK_CITY = "武汉";
+
+// 尝试IP定位获取用户所在城市，失败直接返回兜底城市
+const getUserCity = async () => {
+  try {
+    const controller = new AbortController();
+    // 3秒超时，避免卡太久
+    const timeoutId = setTimeout(() => controller.abort(), 3000);
+    
+    const res = await fetch("https://ipapi.co/json/", {
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+    
+    const data = await res.json();
+    return data.city || FALLBACK_CITY;
+  } catch {
+    return FALLBACK_CITY;
+  }
+};
+
 const getWeatherData = async () => {
   try {
-    // 直接传城市名调用代理接口，只传一个参数
-    const result = await getWeather("武汉");
-    console.log("天气接口返回：", result); // 方便排查，没问题可以删掉
-
+    // 第一步：先尝试获取用户真实城市并查天气
+    const city = await getUserCity();
+    const result = await getWeather(city);
+    
     const live = result.lives?.[0];
-    if (!live) throw "返回数据格式异常";
+    if (!live) throw new Error("数据格式异常");
 
     weatherData.adCode.city = live.city;
     weatherData.weather = {
@@ -51,8 +73,24 @@ const getWeatherData = async () => {
       windpower: live.windpower,
     };
   } catch (error) {
-    console.error("天气信息获取失败:", error);
-    onError("天气信息获取失败");
+    console.warn("首次获取失败，降级使用默认城市重试", error);
+    try {
+      // 第二步：兜底重试，直接用武汉查询
+      const result = await getWeather(FALLBACK_CITY);
+      const live = result.lives?.[0];
+      if (!live) throw new Error("兜底请求也失败了");
+
+      weatherData.adCode.city = live.city;
+      weatherData.weather = {
+        weather: live.weather,
+        temperature: live.temperature,
+        winddirection: live.winddirection,
+        windpower: live.windpower,
+      };
+    } catch (finalError) {
+      console.error("天气信息获取失败:", finalError);
+      onError("天气信息获取失败");
+    }
   }
 };
 
