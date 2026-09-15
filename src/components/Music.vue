@@ -18,7 +18,6 @@
         </div>
       </Transition>
     </div>
-
     <!-- 展开状态：完整面板 -->
     <div v-else class="expand-panel">
       <!-- 顶部按钮栏 -->
@@ -26,7 +25,6 @@
         <span @click="openMusicList()">音乐列表</span>
         <span class="fold-text" @click="isExpand = false" title="收起">收起</span>
       </div>
-
       <!-- 播放控制区 -->
       <div class="control">
         <go-start theme="filled" size="28" fill="#efefef" @click="changeMusicIndex(0)" />
@@ -38,7 +36,6 @@
         </Transition>
         <go-end theme="filled" size="28" fill="#efefef" @click="changeMusicIndex(1)" />
       </div>
-
       <!-- 信息/音量区 -->
       <div 
         class="menu"
@@ -68,91 +65,62 @@
       </div>
     </div>
   </div>
-
-  <!-- 音乐列表弹窗（原逻辑完全保留） -->
-  <Transition name="fade" mode="out-in">
-    <div class="music-list" v-show="musicListShow" @click="closeMusicList()">
-      <Transition name="zoom">
-        <div class="list" v-show="musicListShow" @click.stop>
-          <close-one
-            class="close"
-            theme="filled"
-            size="28"
-            fill="#ffffff60"
-            @click="closeMusicList()"
-          />
-          <Player
-            ref="playerRef"
-            :songServer="playerData.server"
-            :songType="playerData.type"
-            :songId="playerData.id"
-            :volume="volumeNum"
-          />
-        </div>
-      </Transition>
-    </div>
-  </Transition>
 </template>
 
 <script setup>
-import { ref, reactive, watch, onMounted } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import {
   GoStart,
   PlayOne,
   Pause,
   GoEnd,
-  CloseOne,
   VolumeMute,
   VolumeSmall,
   VolumeNotice,
 } from "@icon-park/vue-next";
-import Player from "@/components/Player.vue";
 import { mainStore } from "@/store";
 
 const store = mainStore();
-
 // 折叠/展开状态
 const isExpand = ref(false);
-
 // 音量条数据
 const volumeShow = ref(false);
 const volumeNum = ref(store.musicVolume ? store.musicVolume : 0.7);
-// 播放列表数据
-const musicListShow = ref(false);
-const playerRef = ref(null);
-const playerData = reactive({
-  server: import.meta.env.VITE_SONG_SERVER,
-  type: import.meta.env.VITE_SONG_TYPE,
-  id: import.meta.env.VITE_SONG_ID,
-});
-// 开启播放列表
+
+// 打开音乐列表 → 调用全局 Player 实例的方法
 const openMusicList = () => {
-  musicListShow.value = true;
-  playerRef.value.toggleList();
+  if (window.$openMusicPanel) {
+    window.$openMusicPanel();
+  }
 };
-// 关闭播放列表
-const closeMusicList = () => {
-  musicListShow.value = false;
-  playerRef.value.toggleList();
-};
-// 音乐播放暂停
+
+// 播放暂停 → 控制全局唯一的 Player
 const changePlayState = () => {
-  playerRef.value.playToggle();
+  if (window.$playToggle) {
+    window.$playToggle();
+  }
 };
-// 音乐上下曲
+
+// 上下切歌 → 控制全局唯一的 Player
 const changeMusicIndex = (type) => {
-  playerRef.value.changeSong(type);
+  if (window.$changeSong) {
+    window.$changeSong(type);
+  }
 };
+
 onMounted(() => {
-  // 挂载方法至 window
+  // 兼容老的卡片调用
   window.$openList = openMusicList;
 });
-// 监听音量变化
+
+// 监听音量变化，同步给全局 Player
 watch(
   () => volumeNum.value,
   (value) => {
     store.musicVolume = value;
-    playerRef.value.changeVolume(store.musicVolume);
+    if (window.$setVolume) {
+      window.$setVolume(value);
+    }
   },
 );
 </script>
@@ -336,73 +304,6 @@ watch(
     .expand-panel {
       width: calc(100vw - 32px);
     }
-  }
-}
-
-// 原音乐列表弹窗样式完全保留
-.music-list {
-  position: fixed;
-  top: 0;
-  left: 0;
-  margin: auto;
-  width: 100%;
-  height: 100%;
-  background-color: #00000080;
-  backdrop-filter: blur(20px);
-  z-index: 1000;
-
-  .list {
-    position: absolute;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    top: calc(50% - 300px);
-    left: calc(50% - 320px);
-    width: 640px;
-    height: 600px;
-    background-color: #ffffff66;
-    border-radius: 6px;
-    z-index: 1001;
-
-    @media (max-width: 720px) {
-      left: calc(50% - 45%);
-      width: 90%;
-    }
-
-    .close {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      width: 28px;
-      height: 28px;
-      display: block;
-
-      &:hover {
-        transform: scale(1.2);
-      }
-
-      &:active {
-        transform: scale(0.95);
-      }
-    }
-  }
-}
-
-// 弹窗动画
-.zoom-enter-active {
-  animation: zoom 0.4s ease-in-out;
-}
-.zoom-leave-active {
-  animation: zoom 0.3s ease-in-out reverse;
-}
-@keyframes zoom {
-  0% {
-    opacity: 0;
-    transform: scale(0) translateY(-600px);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1) translateY(0);
   }
 }
 </style>
